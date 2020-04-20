@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych.js"></script>
+    <script src="plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="plugins/jspsych-html-button-response.js"></script>
+    <script src="plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="plugins/jspsych-audio-button-response.js"></script>
+    <script src="plugins/jspsych-same-different-html.js"></script>
+    <script src="plugins/jspsych-same-different-image.js"></script>
+    <script src="plugins/jspsych-survey-multi-select.js"></script>
+    <script src="plugins/jspsych-survey-text.js"></script>
+    <link href="css/jspsych.css" rel="stylesheet" type="text/css"></link>
+  </head>
+  <body></body>
+  <script>
+
+    /* create timeline */
+    var timeline = [];
+
+    /* define welcome message trial */
+    var welcome = {
+      type: "html-button-response",
+      stimulus: "<p>Hello! Thank your participating in this experiment.</p><br>" +
+           "<p><b>Please check the volume on your headphones/speakers is set to a comfortable and safe level</b>.</p><br>"  +
+           "<p>When you are ready to begin, press the start button.</p>",
+      choices: ['Start'],
+    };
+    timeline.push(welcome);
+
+    var audio = [
+        "music/test.mp3","music/yao_tribe_happy.mp3",
+        "music/chun_jiang_calm.mp3", "music/zhan_tai_feng_angry.mp3",
+        "music/chang_men_yuan_sad.mp3", "music/yang_jia_jiang_angry.mp3","music/pingsha_calm.mp3","music/zhan_tai_feng_happy.mp3",
+        "music/qiu_feng_ci_sad.mp3", "music/golden_turtle_sad.mp3","music/drunker_angry.mp3","music/yingtai_calm.mp3",
+        "music/unicorn_trapping_purse_happy.mp3", "music/river_all_red_angry.mp3",
+        "music/opera_susan_sad.mp3","music/kong_cheng_ji_calm.mp3","music/zhidou_happy.mp3"
+    ];
+
+    var consent = {
+       type: 'survey-text',
+       preamble: "<p>We appreciate you taking the time to participate in this experiment; " +
+           "It should take no more than 20 minutes to complete.</p>" +
+           "<p>To make sure you get full course credit for your time, please input your 'participant ID'" +
+           " which the instructor shared with you." +
+           " Remember, you are free to stop the experiment at any time for any reason." +
+           " This would not affect your grade.</p>",
+       questions: [{prompt: "Participant ID", required: true}]
+
+    };
+    timeline.push(consent)
+
+    var background1 = {
+      type: 'survey-text',
+      preamble: "<p>This experiments studies the identification of the perceived emotion in Chinese traditional music and operas</p>" +
+          "<p>First, let's start with some background survey.</p><br>" +
+          "<p></p>",
+      questions: [{prompt: "What kind(s) of music you are most exposed to? (e.g., Western classical music, rock music, Irish music, Hindustani music, East Asian Music...)", required: true}]
+    };
+    timeline.push(background1)
+
+
+    var background2 = {
+      type: "html-button-response",
+      stimulus: "<p>Select one choice that best describes your familarity to Chinese traditional music and operas.</p><br>",
+
+      choices: ['Very familiar',"Moderately familiar","Very little familiar", "Not familiar at all"],
+    };
+    timeline.push(background2)
+
+
+    var instructions = {
+      type: "html-button-response",
+      stimulus: "<p>In this experiment, you are asked to identify the perceived emotion in Chinese traditional music and operas. Perceived emotion refers to the emotion expresses in the music.</p>" +
+          "<p>Listen to each excerpt and identify the emotion the song conveys. After that, select one music aspect(s) of the excerpt that most effects your choice.</p>" +
+          "<p>You can replay the audio as many times as you want. but once you submit the response, you cannot go back to modify the previous one</p>" +
+          "</div>"+
+          "<p>Press the button to continue to a test example.</p>",
+        //   "<audio controls src='sound/NoEscape1.wav'> Your browser does not support the <code>audio</code> element. </audio>"+ "<t><t><t>" +
+        //   "<audio controls src='sound/NoEscape2.wav'> Your browser does not support the <code>audio</code> element. </audio>",
+    //   post_trial_gap: 2000,
+      choices: ['Continue'],
+    };
+
+    timeline.push(instructions);
+
+    var example_p1 = {
+      type: "html-button-response",
+      stimulus: "<p>Below is an example of the test you are going to see. Take your time to familiarize yourself with this procedure</p>" +
+          "<p>Once you are ready, press the play button to continue to the experiment</p>" +
+          "</div>"+
+          "<audio controls src='music/test.mp3'> Your browser does not support the <code>audio</code> element. </audio>"+
+          "<p>While doing this question, thinking about which music aspect of this piece has the MOST influence on yout choice?</p>"+
+          "<p>Timbre? Tempo? Orchestration? Dynamics? Melodic complexity? Rhythmic complexity? Pitch range?</p>"+
+          "<p>Which emotion does this piece express?(select one)</p>",
+      choices: ['Joy', 'Sadness', 'Anger','Peace'],
+
+      sources: ['music/test.mp3']
+    };
+    timeline.push(example_p1);
+
+    var example_p2 = {
+      type: 'html-button-response',
+      stimulus:
+          "<audio controls src='music/test.mp3'> Your browser does not support the <code>audio</code> element. </audio>"+
+          "<p>Which music aspect of this piece has the MOST influence on your emotion choice? (select one)</p>",
+      choices: ["Timbre", "Tempo", "Orchestration", "Dynamics", "Melodic complexity","Rhythmic complexity", "Pitch range"],
+      required: true,
+
+      sources: ['music/test.mp3']
+    };
+    timeline.push(example_p2);
+
+    var exp_start = {
+      type: "html-button-response",
+      stimulus: "<p><b>The experiment is going to start</b>. Press the button to continue.</p>"+
+                "<p>If you are not ready yet, please refresh the page to go back to the beginning.</p>",
+      choices: ['Continue'],
+    };
+
+    timeline.push(exp_start);
+
+
+    function make_exp1(music, idx){
+
+        var q1 = {
+            type: "html-button-response",
+            stimulus: "<p><b>Experiment " + (idx+1).toString() + "</b></p>" +
+                "<p>Listen to the following excerpt and choose one emotion the song expresses. Then select music aspect(s) of this excerpt that most effects your choice.</p>" +
+                "</div>"+
+                "<audio controls src=" + music+ "> Your browser does not support the <code>audio</code> element. </audio>"+
+                "<p>While doing this question, thinking about which music aspect of this piece has the MOST influence on yout choice?</p>"+
+                "<p>Timbre? Tempo? Orchestration? Dynamics? Melodic complexity? Rhythmic complexity? Pitch range?</p>"+
+                "<p>Which emotion does this piece express?(select one)</p>",
+            choices: ['Joy', 'Sadness', 'Anger','Peace'],
+            sources: [music]
+          };
+
+        return q1;
+    }
+
+    function make_exp2(music, idx){
+
+        var q2 = {
+          type: 'html-button-response',
+          stimulus: "<p><b>Experiment " + (idx+1).toString() + "</b></p>" +
+              "<audio controls src=" + music+ "> Your browser does not support the <code>audio</code> element. </audio>" +
+              "<p>Which music aspect of this piece has the MOST influence on your emotion choice? (select one)</p>",
+          choices: ["Timbre", "Tempo", "Orchestration", "Dynamics", "Melodic complexity","Rhythmic complexity", "Pitch range"],
+          required: true,
+
+          sources: [music]
+        };
+
+        return q2;
+    }
+
+    // Modify this to change experiment settings
+    var music_list = ["music/yao_tribe_happy.mp3",
+    "music/chun_jiang_calm.mp3", "music/zhan_tai_feng_angry.mp3",
+    "music/chang_men_yuan_sad.mp3", "music/yang_jia_jiang_angry.mp3","music/pingsha_calm.mp3","music/zhan_tai_feng_happy.mp3",
+    "music/qiu_feng_ci_sad.mp3", "music/golden_turtle_sad.mp3","music/drunker_angry.mp3","music/yingtai_calm.mp3",
+    "music/unicorn_trapping_purse_happy.mp3", "music/river_all_red_angry.mp3",
+    "music/opera_susan_sad.mp3","music/kong_cheng_ji_calm.mp3","music/zhidou_happy.mp3"]
+
+
+    for (let idx = 0; idx<music_list.length; idx++){
+        // console.log(tuple_list[idx][0])
+        timeline.push(make_exp1(music_list[idx], idx));
+        timeline.push(make_exp2(music_list[idx], idx));
+    }
+
+    // timeline = timeline.concat([exp1]);
+
+    var goodbye = {
+       type: 'html-keyboard-response',
+       stimulus: "<p>Thank you for taking the time to participate in this experiment!</p><br>" +
+                "<p>Please press any key to terminate the experiment.</p>"
+    };
+    timeline.push(goodbye)
+
+    function saveData(name, data){
+      var date = new Date();
+      var timestamp = Math.round(date.getTime() / 60000);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({filename: name + timestamp, filedata: data}));
+    }
+
+
+    jsPsych.init({
+      timeline: timeline,
+      preload_audio: audio,
+      show_preload_progress_bar: true,
+      on_finish: function() {saveData("experiment" +  "_data", jsPsych.data.get().csv())}
+    });
+  </script>
+</html>
